@@ -1,0 +1,44 @@
+{
+  "project_info": {
+    "project_number": "21383203526",
+    "firebase_url": "https://nyumba-kumi-a8b6b.firebaseio.com",
+    "project_id": "nyumba-kumi-a8b6b",
+    "storage_bucket": "nyumba-kumi-a8b6b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:21383203526:android:9a829e7fca0bac74",
+        "android_client_info": {
+          "package_name": "com.nyumba.nyumbakumi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "21383203526-m8pidfcicjeguakp8eoa21lttdp3a7jf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nyumba.nyumbakumi",
+            "certificate_hash": "95285a73f3954acee3995f1b768aa7d6a54a0142"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC4blNCDXvfCLfPzTuJIdTdSxVOMQOBzlU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "21383203526-m0sopc60isaq3cd7rr6snmuqoiljvai1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
