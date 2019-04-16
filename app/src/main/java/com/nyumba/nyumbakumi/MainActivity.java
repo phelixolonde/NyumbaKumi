@@ -2,43 +2,31 @@ package com.nyumba.nyumbakumi;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.PopupMenu;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView mTextMessage;
+
     String username = "";
     FirebaseAuth mAuth;
+    FloatingActionButton fab;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_chat:
-                    mTextMessage.setText(R.string.title_chat);
-                    return true;
-                case R.id.navigation_report:
-                    mTextMessage.setText(R.string.title_report);
-                    return true;
-            }
-            return false;
-        }
-    };
+    private static final String FRAGMENT_CHAT = "chat";
+    private static final String FRAGMENT_HOME = "home";
+    private static final String FRAGMENT_REPORT = "report";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,10 +40,80 @@ public class MainActivity extends AppCompatActivity {
         }
         username = getIntent().getExtras().getString("username");
 
-        mTextMessage = findViewById(R.id.message);
+
         BottomNavigationView navigation = findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+
+        fab = findViewById(R.id.fabAdd);
+
+        //switching functionality of the floating action button
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.content_frame);
+
+                String tag = currentFragment.getTag();
+                switch (tag) {
+                    case FRAGMENT_CHAT:
+                        ((ChatFragment) currentFragment).createNewGroup();
+                        break;
+                    case FRAGMENT_HOME:
+                        ((HomeFragment) currentFragment).createNewPost();
+                        break;
+                    case FRAGMENT_REPORT:
+
+                        break;
+                    default:
+
+                        break;
+                }
+            }
+        });
+        if (savedInstanceState == null) {
+            navigation.setSelectedItemId(R.id.navigation_home); // change to whichever id should be default
+        }
     }
+
+    //switching fragments
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            Fragment fragment;
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+                    fab.show();
+                    fragment = new HomeFragment();
+                    ft.replace(R.id.content_frame, fragment, FRAGMENT_HOME);
+                    ft.commit();
+                    return true;
+                case R.id.navigation_chat:
+                    fab.show();
+                    fragment = new ChatFragment();
+                    ft.replace(R.id.content_frame, fragment, FRAGMENT_CHAT);
+                    ft.commit();
+                    return true;
+                case R.id.navigation_report:
+                    fab.hide();
+                    fragment = new ReportFragment();
+                    ft.replace(R.id.content_frame, fragment, FRAGMENT_REPORT);
+                    ft.commit();
+                    return true;
+                default:
+                    fab.show();
+                    fragment = new HomeFragment();
+                    ft.replace(R.id.content_frame, fragment, FRAGMENT_HOME);
+                    ft.commit();
+                    return true;
+            }
+
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -73,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
             MenuInflater inflater = popup.getMenuInflater();
             inflater.inflate(R.menu.account, popup.getMenu());
             popup.show();
+            //logout action
             popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                 @Override
                 public boolean onMenuItemClick(MenuItem item) {

@@ -1,10 +1,9 @@
 package com.nyumba.nyumbakumi;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +20,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.wang.avi.AVLoadingIndicatorView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 public class Login extends AppCompatActivity {
 
@@ -63,6 +65,7 @@ public class Login extends AppCompatActivity {
         });
     }
 
+    //perform login using email add password
     private void login(final String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -70,7 +73,7 @@ public class Login extends AppCompatActivity {
                 if (task.isSuccessful()) {
 
 
-                    getUsername(email,mAuth.getCurrentUser().getUid());
+                    getUsername(mAuth.getCurrentUser().getUid());
 
                 } else {
                     Toast.makeText(Login.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
@@ -80,7 +83,8 @@ public class Login extends AppCompatActivity {
         });
     }
 
-    private void getUsername(final String email, String uid) {
+    //Get Username from database
+    private void getUsername( String uid) {
 
         mRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -89,6 +93,14 @@ public class Login extends AppCompatActivity {
                 String username = dataSnapshot.child("username").getValue().toString();
                 Intent intent = new Intent(Login.this, MainActivity.class);
                 intent.putExtra("username", username);
+                SharedPreferences sp =getSharedPreferences("sp",Context.MODE_PRIVATE);
+
+                //save username throught the app
+                sp.edit().putString("username",username).apply();
+
+                //save session throughout the app
+                sp.edit().putBoolean("loggedin",true).apply();
+
                 startActivity(intent);
                 avi.hide();
                 finish();
@@ -103,6 +115,7 @@ public class Login extends AppCompatActivity {
 
     }
 
+    //valiadtes the fields
     private boolean validate() {
         boolean isValid;
         if (txtUsername.getText().toString().equals("")) {
