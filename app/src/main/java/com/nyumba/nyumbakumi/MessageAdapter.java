@@ -37,9 +37,13 @@ public class MessageAdapter extends FirebaseListAdapter<ChatMessage> {
         messageText.setText(model.getMessageText());
 
 //sets photo to message
-        if (model.getPhoto()!=null){
+        try {
+            if (model.getPhoto() != null) {
 
-            Picasso.get().load(model.getPhoto()).into(photo);
+                Picasso.get().load(model.getPhoto()).into(photo);
+            }
+        }catch (Exception ignored){
+
         }
         DatabaseReference nref=FirebaseDatabase.getInstance().getReference().child("nyumbakumi").child("users").child(
                 model.getMessageUserId());
